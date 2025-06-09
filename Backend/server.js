@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import mongoose from "mongoose";
+import fs from "fs";
+console.log("Files in controllers:", fs.readdirSync("./controllers"));
 
 // Importing routes
 import authRoutes from "./routes/authRoutes.js";
