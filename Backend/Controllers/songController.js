@@ -57,7 +57,7 @@ export const addSong = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    
+
     return res.json({ error: error.message });
   }
 };
@@ -74,7 +74,7 @@ export const deleteSong = async (req, res) => {
       res.status(400);
       throw new Error("No id provided");
     }
-   
+
     const db = conn.db("music_streaming");
     const collection = db.collection("songs");
     const bucket = new mongodb.GridFSBucket(db, {
@@ -113,7 +113,6 @@ export const deleteSong = async (req, res) => {
 // @access  Public
 export const getSongs = async (req, res) => {
   try {
-   
     const db = conn.db("music_streaming");
     const collection = db.collection("songs");
     const songs = await collection.find({}).toArray();
@@ -139,7 +138,7 @@ export const streamSong = async (req, res) => {
       throw new Error("No file name provided");
     }
     // connection to the database and getting the file from the database
-    
+
     const db = conn.db("music_streaming");
     const bucket = new mongodb.GridFSBucket(db, {
       bucketName: "uploads",
@@ -147,10 +146,14 @@ export const streamSong = async (req, res) => {
 
     // setting the content type of the file
 
-
     // streaming the file to the client
-    const downloadStream = bucket.openDownloadStreamByName(req.params.filename).pipe(res).on("error", (error) => { throw error; });
-    
+    const downloadStream = bucket
+      .openDownloadStreamByName(req.params.filename)
+      .pipe(res)
+      .on("error", (error) => {
+        throw error;
+      });
+
     downloadStream.on("end", () => {
       res.end();
     });

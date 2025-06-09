@@ -1,11 +1,6 @@
 import express from "express";
 import multer from "multer";
-import {
-  streamSong,
-  addSong,
-  deleteSong,
-  getSongs,
-} from "../controllers/songController.js";
+import { addSong, deleteSong } from "../controllers/songController.js";
 
 const upload = multer({ dest: "uploads/" });
 
