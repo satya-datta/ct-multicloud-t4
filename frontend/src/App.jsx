@@ -11,7 +11,7 @@ import AudioPlayer from "./utils/AudioPlayer";
 import Register from "./pages/Register";
 import Playlist from "./pages/Playlist";
 
-//Importing Contexts
+//Importing Contexts  
 import { SidebarContextState } from "./Context/SibebarContext";
 import { SongContextState } from "./Context/SongContext";
 import { QueueContextState } from "./Context/QueueContex";
