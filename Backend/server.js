@@ -10,7 +10,7 @@ console.log("Files in controllers:", fs.readdirSync("./controllers"));
 import authRoutes from "./routes/authRoutes.js";
 import songRoutes from "./routes/songRoutes.js";
 import playlistRoutes from "./routes/playlistRoutes.js";
-// import { getSongs, streamSong } from "./controllers/songController.js";
+
 import { userJwtMiddleware } from "./middlewares/authMiddleware.js";
 
 // Load environment variables
@@ -40,8 +40,55 @@ app.use(express.static(path.join(path.resolve(), "public")));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/song", userJwtMiddleware, songRoutes);
 app.use("/api/v1/playlist", userJwtMiddleware, playlistRoutes);
-// app.get("/api/v1/stream/:filename", streamSong);
-// app.get("/api/v1/songs", getSongs);
+app.get("/api/v1/stream/:filename", async (req, res) => {
+  try {
+    // if no file name is provided throw an error
+    if (!req.params.filename) {
+      res.status(400);
+      throw new Error("No file name provided");
+    }
+    // connection to the database and getting the file from the database
+
+    const db = conn.db("music_streaming");
+    const bucket = new mongodb.GridFSBucket(db, {
+      bucketName: "uploads",
+    });
+
+    // setting the content type of the file
+
+    // streaming the file to the client
+    const downloadStream = bucket
+      .openDownloadStreamByName(req.params.filename)
+      .pipe(res)
+      .on("error", (error) => {
+        throw error;
+      });
+
+    downloadStream.on("end", () => {
+      res.end();
+    });
+
+    // if there is an error throw an error
+  } catch (error) {
+    console.log(error.message);
+    return res.json({ error: error.message, status: "error" });
+  }
+});
+app.get("/api/v1/songs", async (req, res) => {
+  try {
+    const db = conn.db("music_streaming");
+    const collection = db.collection("songs");
+    const songs = await collection.find({}).toArray();
+    if (songs.length === 0) {
+      res.status(404);
+      throw new Error("No songs found");
+    }
+    res.status(200).json({ songs });
+  } catch (error) {
+    console.log(error);
+    return res.json({ error: error.message, status: "error" });
+  }
+});
 
 // Fallback to index.html for SPA
 app.get("*", (req, res) => {
