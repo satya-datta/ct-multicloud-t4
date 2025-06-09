@@ -10,7 +10,7 @@ console.log("Files in controllers:", fs.readdirSync("./controllers"));
 import authRoutes from "./routes/authRoutes.js";
 import songRoutes from "./routes/songRoutes.js";
 import playlistRoutes from "./routes/playlistRoutes.js";
-import { getSongs, streamSong } from "./controllers/songController.js";
+// import { getSongs, streamSong } from "./controllers/songController.js";
 import { userJwtMiddleware } from "./middlewares/authMiddleware.js";
 
 // Load environment variables
@@ -40,8 +40,8 @@ app.use(express.static(path.join(path.resolve(), "public")));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/song", userJwtMiddleware, songRoutes);
 app.use("/api/v1/playlist", userJwtMiddleware, playlistRoutes);
-app.get("/api/v1/stream/:filename", streamSong);
-app.get("/api/v1/songs", getSongs);
+// app.get("/api/v1/stream/:filename", streamSong);
+// app.get("/api/v1/songs", getSongs);
 
 // Fallback to index.html for SPA
 app.get("*", (req, res) => {
