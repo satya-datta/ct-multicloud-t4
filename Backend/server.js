@@ -23,26 +23,27 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Serve static files from the 'public' directory
-app.use(express.static(path.join(path.resolve(), 'public')));
+app.use(express.static(path.join(path.resolve(), "public")));
 
 // Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/song", userJwtMiddleware, songRoutes);
 app.use("/api/v1/playlist", userJwtMiddleware, playlistRoutes);
 app.get("/api/v1/stream/:filename", streamSong);
-app.get('/api/v1/songs', getSongs);
+app.get("/api/v1/songs", getSongs);
 
 // Fallback to index.html for SPA
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve('public/index.html'));
+  res.sendFile(path.resolve("public/index.html"));
 });
 
 // Start the server
